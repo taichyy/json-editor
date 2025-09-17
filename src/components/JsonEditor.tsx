@@ -3,13 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Upload, Download, FileText, Code, Database, Plus, Trash2, ChevronDown, ChevronRight, Table, X, Minimize2, Maximize2, Copy, GitCompare, Trash } from 'lucide-react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import JsonView from '@uiw/react-json-view';
 import Editor from '@monaco-editor/react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 
-interface JsonEditorProps { }
-
-const JsonEditor: React.FC<JsonEditorProps> = () => {
+const JsonEditor: React.FC = () => {
   const [jsonData, setJsonData] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'tree' | 'table'>('tree');
   const [arrayTableModal, setArrayTableModal] = useState<{ isOpen: boolean; data: any[]; path: string; onChange: (newData: any[]) => void } | null>(null);
