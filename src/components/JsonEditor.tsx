@@ -214,18 +214,18 @@ const JsonEditor: React.FC = () => {
       setActiveTab('compare');
 
       // Show a brief success message
-      const button = document.activeElement as HTMLButtonElement;
-      if (button) {
-        const originalText = button.textContent;
-        button.textContent = '✓ Exported!';
-        button.style.backgroundColor = '#10b981';
-        button.style.color = 'white';
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.style.backgroundColor = '';
-          button.style.color = '';
-        }, 1500);
-      }
+      // const button = document.activeElement as HTMLButtonElement;
+      // if (button) {
+      //   const originalText = button.textContent;
+      //   button.textContent = '✓ Exported!';
+      //   button.style.backgroundColor = '#10b981';
+      //   button.style.color = 'white';
+      //   setTimeout(() => {
+      //     button.textContent = originalText;
+      //     button.style.backgroundColor = '';
+      //     button.style.color = '';
+      //   }, 1500);
+      // }
     }
   };
 
