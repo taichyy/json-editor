@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
@@ -31,7 +32,10 @@ export default function RootLayout({
     return (
         <html suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <ThemeProvider>{children}</ThemeProvider>
+                <Analytics />
+                <ThemeProvider>
+                    {children}
+                </ThemeProvider>
             </body>
         </html>
     );
