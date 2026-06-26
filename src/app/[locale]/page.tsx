@@ -1,16 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-
-import JsonEditor from '@/components/JsonEditor';
 import { LandingPage } from '@/components/LandingPage';
+import { useRouter } from '@/i18n/navigation';
 
 export default function Home() {
-    const [inEditor, setInEditor] = useState(false);
+  const router = useRouter();
 
-    if (inEditor) {
-        return <JsonEditor onBackToHome={() => setInEditor(false)} />;
-    }
-
-    return <LandingPage onEnter={() => setInEditor(true)} />;
+  return <LandingPage onEnter={() => router.push('/editor')} />;
 }

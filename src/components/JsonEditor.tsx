@@ -754,7 +754,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ onBackToHome }) => {
                             style={{ borderBottom: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSecondary }}
                         >
                             <p className="text-sm font-semibold" style={{ color: cv.textPrimary }}>
-                                {t('tableViewPath').replace('{path}', arrayTableModal.path || 'array')}
+                                {t('tableViewPath', { path: arrayTableModal.path || 'array' })}
                             </p>
                             <button
                                 onClick={() => setArrayTableModal(null)}
@@ -907,7 +907,7 @@ const EnhancedTreeView: React.FC<{
         return (
             <div className="space-y-1">
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="font-mono text-xs" style={{ color: cv.textSecondary }}>{t('array').replace('{count}', String(data.length))}</span>
+                    <span className="font-mono text-xs" style={{ color: cv.textSecondary }}>{t('array', { count: data.length })}</span>
                     <button
                         onClick={() => onArrayTableRequest(data, 'root', onChange)}
                         className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] transition-colors"
@@ -944,7 +944,7 @@ const EnhancedTreeView: React.FC<{
         );
     }
 
-    return <span className="text-xs" style={{ color: cv.textTertiary }}>{t('simpleValue').replace('{value}', 'invalid')}</span>;
+    return <span className="text-xs" style={{ color: cv.textTertiary }}>{t('simpleValue', { value: 'invalid' })}</span>;
 };
 
 // ─── EditableSimpleValue ──────────────────────────────────────────────────────
@@ -1060,7 +1060,7 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
         return (
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('rows').replace('{count}', String(arr.length))}</p>
+                    <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('rows', { count: arr.length })}</p>
                     <button
                         onClick={() => onChange([...arr, columns.reduce((o, c) => ({ ...o, [c]: '' }), {})])}
                         className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium text-white transition-colors"
@@ -1113,7 +1113,7 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
         const entries = Object.entries(obj);
         return (
             <div className="space-y-3">
-                <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('properties').replace('{count}', String(entries.length))}</p>
+                <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('properties', { count: entries.length })}</p>
                 <div className="overflow-x-auto rounded-lg" style={{ border: `1px solid ${cv.borderDefault}` }}>
                     <table className="min-w-full border-collapse">
                         <thead>
@@ -1166,7 +1166,7 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
     const renderGenericTable = (arr: any[], path = '') => {
         return (
             <div className="space-y-3">
-                <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('items').replace('{count}', String(arr.length))}</p>
+                <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('items', { count: arr.length })}</p>
                 <div className="overflow-x-auto rounded-lg" style={{ border: `1px solid ${cv.borderDefault}` }}>
                     <table className="min-w-full border-collapse">
                         <thead>
@@ -1218,7 +1218,7 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
 
     if (Array.isArray(data)) return renderArrayTable(data);
     if (data && typeof data === 'object') return renderObjectTable(data);
-    return <p className="text-xs" style={{ color: cv.textTertiary }}>{t('simpleValue').replace('{value}', String(data))}</p>;
+    return <p className="text-xs" style={{ color: cv.textTertiary }}>{t('simpleValue', { value: String(data) })}</p>;
 };
 
 // ─── EditableCell ─────────────────────────────────────────────────────────────
