@@ -21,8 +21,8 @@
             "description": "Arrays of objects unfold into editable spreadsheet-style tables."
         },
         "monaco": {
-            "title": "Monaco editor",
-            "description": "Full syntax highlighting, validation, format, and minify."
+            "title": "Editor",
+            "description": "Full syntax highlighting, validation, format."
         },
         "diff": {
             "title": "JSON diff",
