@@ -1,0 +1,92 @@
+{
+    "nav": {
+        "openEditor": "Open editor"
+    },
+    "landing": {
+        "badge": "Free · No login · Runs in browser",
+        "headline": "Edit JSON\nwithout friction.",
+        "subheadline": "Tree view, table view, Monaco editor, and diff comparison — all local, all fast. Your data never leaves the browser.",
+        "startEditing": "Start editing",
+        "noSignup": "No signup required",
+        "localProcessing": "All processing happens locally. Zero telemetry. Open tab and go.",
+        "noDataSent": "No data is sent to any server."
+    },
+    "features": {
+        "tree": {
+            "title": "Tree editor",
+            "description": "Navigate nested JSON visually. Click any value to edit in place."
+        },
+        "table": {
+            "title": "Table view",
+            "description": "Arrays of objects unfold into editable spreadsheet-style tables."
+        },
+        "monaco": {
+            "title": "Monaco editor",
+            "description": "Full syntax highlighting, validation, format, and minify."
+        },
+        "diff": {
+            "title": "JSON diff",
+            "description": "See every change highlighted side by side."
+        },
+        "export": {
+            "title": "Export anywhere",
+            "description": "JSON, plain text, JavaScript object, or PHP array."
+        }
+    },
+    "editor": {
+        "backToHome": "Back to home",
+        "tabEditor": "Editor",
+        "tabCompare": "Compare",
+        "clearData": "Clear",
+        "confirmClear": "Clear all data? This cannot be undone.",
+        "import": "Import",
+        "uploadFile": "Upload file",
+        "clickToUpload": "Click to upload .json",
+        "pasteJson": "Paste JSON",
+        "invalidJsonFile": "Invalid JSON file. Please check the format.",
+        "invalidJsonFormat": "Invalid JSON format",
+        "export": "Export",
+        "exportJson": "JSON file",
+        "exportJs": "JavaScript",
+        "exportPhp": "PHP array",
+        "exportText": "Text file",
+        "treeEditor": "Tree editor",
+        "treeEditorHint": "Click any value to edit · arrays open as table",
+        "noData": "No data",
+        "noDataHint": "Upload a file or paste JSON to get started",
+        "jsonSource": "JSON source",
+        "invalid": "Invalid",
+        "diff": "Diff",
+        "format": "Format",
+        "minify": "Minify",
+        "copy": "Copy",
+        "copied": "Copied",
+        "shortcutHint": "Ctrl+F: Format · Ctrl+Shift+M: Minify · Ctrl+Shift+C: Copy",
+        "jsonDiff": "JSON diff",
+        "jsonDiffHint": "Paste two JSON documents to see differences highlighted",
+        "formatBoth": "Format both",
+        "clear": "Clear",
+        "showDifferences": "Show differences",
+        "original": "Original",
+        "modified": "Modified",
+        "invalidJson": "Invalid JSON",
+        "diffView": "Diff view",
+        "tableView": "Table view",
+        "table": "Table",
+        "tableViewPath": "Table view — {path}",
+        "cancel": "Cancel",
+        "done": "Done",
+        "addRow": "Add row",
+        "rows": "{count} rows",
+        "properties": "{count} properties",
+        "items": "{count} items",
+        "simpleValue": "Simple value: {value}",
+        "deleteRow": "Delete row",
+        "clickToEdit": "Click to edit",
+        "editCell": "edit",
+        "array": "Array [{count}]",
+        "tableViewBtn": "Table view",
+        "jsObjectCopied": "JavaScript object copied to clipboard!",
+        "phpArrayCopied": "PHP array copied to clipboard!"
+    }
+}

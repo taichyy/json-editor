@@ -1,0 +1,92 @@
+{
+    "nav": {
+        "openEditor": "開啟編輯器"
+    },
+    "landing": {
+        "badge": "免費 · 無需登入 · 在瀏覽器中執行",
+        "headline": "流暢編輯\nJSON 資料。",
+        "subheadline": "樹狀視圖、表格視圖、Monaco 編輯器與差異比較，完全本機運作，速度飛快。您的資料絕不離開瀏覽器。",
+        "startEditing": "開始編輯",
+        "noSignup": "無需註冊",
+        "localProcessing": "所有處理均在本機完成，無資安風險。開啟分頁即可使用。",
+        "noDataSent": "資料不會傳送至任何伺服器。"
+    },
+    "features": {
+        "tree": {
+            "title": "樹狀編輯器",
+            "description": "以視覺化方式瀏覽巢狀 JSON，點擊任意值即可編輯。"
+        },
+        "table": {
+            "title": "表格視圖",
+            "description": "物件陣列可展開為可編輯的試算表樣式表格。"
+        },
+        "monaco": {
+            "title": "編輯器",
+            "description": "完整語法驗證、格式化功能。"
+        },
+        "diff": {
+            "title": "JSON 差異比較",
+            "description": "並排顯示每一項變更。"
+        },
+        "export": {
+            "title": "多格式匯出",
+            "description": "支援 JSON、純文字、JavaScript 物件或 PHP 陣列。"
+        }
+    },
+    "editor": {
+        "backToHome": "返回首頁",
+        "tabEditor": "編輯器",
+        "tabCompare": "比較",
+        "clearData": "清除",
+        "confirmClear": "清除所有資料？此操作無法復原。",
+        "import": "匯入",
+        "uploadFile": "上傳檔案",
+        "clickToUpload": "點擊上傳 .json",
+        "pasteJson": "貼上 JSON",
+        "invalidJsonFile": "無效的 JSON 檔案，請確認格式是否正確。",
+        "invalidJsonFormat": "無效的 JSON 格式",
+        "export": "匯出",
+        "exportJson": "JSON 檔案",
+        "exportJs": "JavaScript",
+        "exportPhp": "PHP 陣列",
+        "exportText": "文字檔案",
+        "treeEditor": "樹狀編輯器",
+        "treeEditorHint": "點擊任意值以編輯 · 陣列可開啟表格視圖",
+        "noData": "無資料",
+        "noDataHint": "上傳檔案或貼上 JSON 以開始使用",
+        "jsonSource": "JSON 原始碼",
+        "invalid": "無效",
+        "diff": "差異",
+        "format": "格式化",
+        "minify": "壓縮",
+        "copy": "複製",
+        "copied": "已複製",
+        "shortcutHint": "Ctrl+F: 格式化 · Ctrl+Shift+M: 壓縮 · Ctrl+Shift+C: 複製",
+        "jsonDiff": "JSON 差異比較",
+        "jsonDiffHint": "貼上兩份 JSON 文件以高亮顯示差異",
+        "formatBoth": "格式化兩者",
+        "clear": "清除",
+        "showDifferences": "顯示差異",
+        "original": "原始",
+        "modified": "修改後",
+        "invalidJson": "無效的 JSON",
+        "diffView": "差異視圖",
+        "tableView": "表格視圖",
+        "table": "表格",
+        "tableViewPath": "表格視圖 — {path}",
+        "cancel": "取消",
+        "done": "完成",
+        "addRow": "新增列",
+        "rows": "{count} 列",
+        "properties": "{count} 個屬性",
+        "items": "{count} 個項目",
+        "simpleValue": "簡單值：{value}",
+        "deleteRow": "刪除列",
+        "clickToEdit": "點擊編輯",
+        "editCell": "編輯",
+        "array": "陣列 [{count}]",
+        "tableViewBtn": "表格視圖",
+        "jsObjectCopied": "JavaScript 物件已複製到剪貼簿！",
+        "phpArrayCopied": "PHP 陣列已複製到剪貼簿！"
+    }
+}

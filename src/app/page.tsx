@@ -1,7 +1,6 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import JsonEditor from '@/components/JsonEditor';
-
-export default function Home() {
-  return <JsonEditor />;
+// Redirect bare "/" to the default locale
+export default function RootPage() {
+    redirect('/en');
 }
