@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, GitCompare, Network, Table2, Code2, Download } from 'lucide-react';
 
-import { ThemeToggle } from './ThemeToggle';
-import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeToggle } from './theme-toggle';
+import { LanguageSwitcher } from './language-switcher';
 
 interface LandingPageProps {
     onEnter: () => void;
@@ -24,7 +24,7 @@ const SAMPLE_JSON = `{
   "privacy": "no data leaves your browser"
 }`;
 
-function JsonPreview() {
+const JsonPreview = () => {
     const [visibleChars, setVisibleChars] = useState(0);
     const [done, setDone] = useState(false);
 
@@ -87,7 +87,9 @@ function JsonPreview() {
     );
 }
 
-function SyntaxHighlight({ code }: { code: string }) {
+const SyntaxHighlight = (props: { code: string }) => {
+    const { code } = props;
+
     const tokens: { type: string; value: string }[] = [];
     let i = 0;
     while (i < code.length) {
@@ -132,7 +134,9 @@ function SyntaxHighlight({ code }: { code: string }) {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export function LandingPage({ onEnter }: LandingPageProps) {
+const LandingPage = (props: LandingPageProps) => {
+    const { onEnter } = props;
+
     const t = useTranslations();
 
     const features = [
@@ -266,8 +270,7 @@ export function LandingPage({ onEnter }: LandingPageProps) {
                         </p>
                         <button
                             onClick={onEnter}
-                            className="self-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold
-                transition-all active:scale-[0.97]"
+                            className="self-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all active:scale-[0.97]"
                             style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
                             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
                             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
@@ -294,3 +297,5 @@ export function LandingPage({ onEnter }: LandingPageProps) {
         </div>
     );
 }
+
+export { LandingPage };

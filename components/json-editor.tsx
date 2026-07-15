@@ -1,9 +1,24 @@
 'use client';
 
 import {
-    Upload, Download, FileText, Code, Database, Plus, Trash2,
-    ChevronDown, ChevronRight, Table, X, Minimize2, Maximize2,
-    Copy, GitCompare, Trash, ArrowLeft, Check
+    Upload, 
+    Download, 
+    FileText, 
+    Code, 
+    Database, 
+    Plus, 
+    Trash2,
+    ChevronDown, 
+    ChevronRight, 
+    Table, 
+    X, 
+    Minimize2, 
+    Maximize2,
+    Copy, 
+    GitCompare, 
+    Trash, 
+    ArrowLeft, 
+    Check
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { useTranslations } from 'next-intl';
@@ -11,9 +26,9 @@ import { useState, useRef, useEffect } from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
-import { useTheme } from './ThemeProvider';
-import { ThemeToggle } from './ThemeToggle';
-import { LanguageSwitcher } from './LanguageSwitcher';
+import { useTheme } from './theme-provider';
+import { ThemeToggle } from './theme-toggle';
+import { LanguageSwitcher } from './language-switcher';
 
 // ─── CSS variable shortcuts ───────────────────────────────────────────────────
 const cv = {
@@ -45,7 +60,9 @@ interface JsonEditorProps {
     onBackToHome?: () => void;
 }
 
-const JsonEditor: React.FC<JsonEditorProps> = ({ onBackToHome }) => {
+const JsonEditor: React.FC<JsonEditorProps> = (props) => {
+    const { onBackToHome } = props;
+
     const { theme } = useTheme();
     const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs';
     const t = useTranslations('editor');
@@ -811,7 +828,9 @@ const EnhancedTreeView: React.FC<{
     onChange: (data: any) => void;
     onArrayTableRequest: (data: any[], path: string, onChange: (newData: any[]) => void) => void;
     path?: string;
-}> = ({ data, onChange, onArrayTableRequest }) => {
+}> = (props) => {
+    const { data, onChange, onArrayTableRequest } = props;
+    
     const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
     const t = useTranslations('editor');
 
@@ -948,7 +967,9 @@ const EnhancedTreeView: React.FC<{
 };
 
 // ─── EditableSimpleValue ──────────────────────────────────────────────────────
-const EditableSimpleValue: React.FC<{ value: any; onChange: (value: any) => void }> = ({ value, onChange }) => {
+const EditableSimpleValue: React.FC<{ value: any; onChange: (value: any) => void }> = (props) => {
+    const { value, onChange } = props;
+
     const [isEditing, setIsEditing] = useState(false);
     const t = useTranslations('editor');
 
@@ -999,7 +1020,9 @@ const EditableSimpleValue: React.FC<{ value: any; onChange: (value: any) => void
 };
 
 // ─── TableView ────────────────────────────────────────────────────────────────
-const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ data, onChange }) => {
+const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = (props) => {
+    const { data, onChange } = props;
+
     const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
     const t = useTranslations('editor');
 
@@ -1111,6 +1134,7 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
 
     const renderObjectTable = (obj: any, path = '') => {
         const entries = Object.entries(obj);
+
         return (
             <div className="space-y-3">
                 <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('properties', { count: entries.length })}</p>
@@ -1222,7 +1246,9 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = ({ dat
 };
 
 // ─── EditableCell ─────────────────────────────────────────────────────────────
-const EditableCell: React.FC<{ value: any; onChange: (value: any) => void }> = ({ value, onChange }) => {
+const EditableCell: React.FC<{ value: any; onChange: (value: any) => void }> = (props) => {
+    const { value, onChange } = props;
+
     const [isEditing, setIsEditing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const t = useTranslations('editor');
@@ -1289,6 +1315,7 @@ const EditableCell: React.FC<{ value: any; onChange: (value: any) => void }> = (
     }
 
     const objKeys = Object.keys(value);
+
     return (
         <div>
             <div className="flex items-center gap-1.5">

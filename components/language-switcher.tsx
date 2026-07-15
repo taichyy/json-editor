@@ -2,9 +2,10 @@
 
 import { useLocale } from 'next-intl';
 import { useTransition } from 'react';
-import { useRouter, usePathname } from '@/i18n/navigation';
 
-export function LanguageSwitcher() {
+import { useRouter, usePathname } from '../i18n/navigation';
+
+const LanguageSwitcher = () => {
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
@@ -39,3 +40,5 @@ export function LanguageSwitcher() {
         </button>
     );
 }
+
+export { LanguageSwitcher };

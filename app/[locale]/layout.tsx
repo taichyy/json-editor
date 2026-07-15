@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 
-import { routing } from '@/i18n/routing';
+import { routing } from '../../i18n/routing';
 
 type Props = {
     children: React.ReactNode;
@@ -33,7 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-export default async function LocaleLayout({ children, params }: Props) {
+const LocaleLayout = async (props: Props) => {
+    const { children, params } = props;
+    
     const { locale } = await params;
 
     // Validate locale
@@ -50,3 +52,5 @@ export default async function LocaleLayout({ children, params }: Props) {
         </NextIntlClientProvider>
     );
 }
+
+export default LocaleLayout;

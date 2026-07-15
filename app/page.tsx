@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 
 // Redirect bare "/" to the default locale
-export default function RootPage() {
+const RootPage = () => {
     redirect('/en');
 }
+
+export default RootPage;

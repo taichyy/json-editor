@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '../components/theme-provider';
 
 const geistSans = localFont({
     src: './fonts/GeistVF.woff',
@@ -24,11 +24,9 @@ export const metadata: Metadata = {
         'A fast, local JSON editor with tree view, table view, Monaco code editor, and diff comparison. Your data never leaves your browser.',
 };
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+const RootLayout = (props : { children: React.ReactNode }) => {
+    const { children } = props;
+
     return (
         <html suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -40,3 +38,5 @@ export default function RootLayout({
         </html>
     );
 }
+
+export default RootLayout;
