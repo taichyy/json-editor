@@ -17,7 +17,6 @@ import {
     Sparkles,
     Minimize2,
     Maximize2,
-    ArrowLeft,
     GitCompare,
     ChevronDown,
     ChevronRight,
@@ -77,13 +76,7 @@ const cv = {
 // ─── Main JsonEditor ──────────────────────────────────────────────────────────
 type TTab = 'editor' | 'compare' | 'merge';
 
-interface JsonEditorProps {
-    onBackToHome?: () => void;
-}
-
-const JsonEditor: React.FC<JsonEditorProps> = (props) => {
-    const { onBackToHome } = props;
-
+const JsonEditor = () => {
     const { theme } = useTheme();
     const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs';
     const t = useTranslations('editor');
@@ -380,18 +373,8 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                 className="flex items-center justify-between gap-2 px-3 sm:px-5 h-12 shrink-0"
                 style={{ borderBottom: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}
             >
-                {/* Left: back + logo + tabs */}
+                {/* Left: logo + tabs */}
                 <div className="flex items-center gap-2 sm:gap-4">
-                    {onBackToHome && (
-                        <button
-                            onClick={onBackToHome}
-                            className={`${btnGhost} text-[var(--text-secondary)] hover:text-[var(--text-primary)]`}
-                            title={t('backToHome')}
-                        >
-                            <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2} />
-                        </button>
-                    )}
-
                     <Brand size={24} hideNameOnMobile />
 
                     {/* Tabs */}

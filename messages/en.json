@@ -41,7 +41,6 @@
         }
     },
     "editor": {
-        "backToHome": "Back to home",
         "tabEditor": "Editor",
         "tabCompare": "Compare",
         "clearData": "Clear",
