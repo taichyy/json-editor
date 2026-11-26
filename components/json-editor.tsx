@@ -40,6 +40,7 @@ import {
     EDITOR_STORAGE_KEYS,
 } from "@/lib/json-utils";
 import { JsonMerge } from "./json-merge";
+import { Link } from "@/i18n/navigation";
 import { GitHubLink } from "./github-link";
 import { Brand, OwlLogo } from "./owl-logo";
 import { useTheme } from "./theme-provider";
@@ -375,7 +376,9 @@ const JsonEditor = () => {
             >
                 {/* Left: logo + tabs */}
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <Brand size={24} hideNameOnMobile />
+                    <Link href="/" aria-label={t('backToHome')} title={t('backToHome')} className="rounded">
+                        <Brand size={24} hideNameOnMobile />
+                    </Link>
 
                     {/* Tabs */}
                     <nav className="flex items-center gap-1">

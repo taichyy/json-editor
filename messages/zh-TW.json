@@ -41,6 +41,7 @@
         }
     },
     "editor": {
+        "backToHome": "返回介紹頁",
         "tabEditor": "編輯器",
         "tabCompare": "比較",
         "clearData": "清除",
