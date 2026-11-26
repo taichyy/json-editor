@@ -1,6 +1,6 @@
-import createMiddleware from 'next-intl/middleware';
+import createMiddleware from "next-intl/middleware";
 
-import { routing } from './i18n/routing';
+import { routing } from "./i18n/routing";
 
 const middleware = createMiddleware(routing);
 

@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import Editor from '@monaco-editor/react';
-import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect } from 'react';
-import ReactDiffViewer from 'react-diff-viewer-continued';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import {
+    X,
+    Code,
+    Plus,
+    Copy,
+    Table,
+    Trash,
+    Check,
     Upload,
+    Trash2,
     Download,
     FileText,
-    Code,
     Database,
-    Plus,
-    Trash2,
-    ChevronDown,
-    ChevronRight,
-    Table,
-    X,
     Minimize2,
     Maximize2,
-    Copy,
-    GitCompare,
-    Trash,
     ArrowLeft,
-    Check,
-} from 'lucide-react';
+    GitCompare,
+    ChevronDown,
+    ChevronRight,
+} from "lucide-react";
+import Editor from "@monaco-editor/react";
+import { useTranslations } from "next-intl";
+import { useState, useRef, useEffect } from "react";
+import ReactDiffViewer from "react-diff-viewer-continued";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { useTheme } from './theme-provider';
-import { ThemeToggle } from './theme-toggle';
-import { LanguageSwitcher } from './language-switcher';
+import { useTheme } from "./theme-provider";
+import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 // ─── CSS variable shortcuts ───────────────────────────────────────────────────
 const cv = {

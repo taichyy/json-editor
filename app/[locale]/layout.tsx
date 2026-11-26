@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getMessages } from 'next-intl/server';
-import { NextIntlClientProvider } from 'next-intl';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getMessages } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
 
-import { routing } from '../../i18n/routing';
+import { routing } from "../../i18n/routing";
 
 type Props = {
     children: React.ReactNode;

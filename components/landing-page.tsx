@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { ArrowRight, GitCompare, Network, Table2, Code2, Download } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { ArrowRight, GitCompare, Network, Table2, Code2, Download } from "lucide-react";
 
-import { ThemeToggle } from './theme-toggle';
-import { LanguageSwitcher } from './language-switcher';
+import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 interface LandingPageProps {
     onEnter: () => void;
