@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
@@ -85,7 +85,7 @@ const JsonPreview = () => {
       `}</style>
         </div>
     );
-};
+}
 
 const SyntaxHighlight = (props: { code: string }) => {
     const { code } = props;
@@ -131,7 +131,7 @@ const SyntaxHighlight = (props: { code: string }) => {
             ))}
         </>
     );
-};
+}
 
 // ── Main component ────────────────────────────────────────────────────────────
 export const LandingPage = (props: LandingPageProps) => {

@@ -51,6 +51,6 @@ const LocaleLayout = async (props: Props) => {
             {children}
         </NextIntlClientProvider>
     );
-};
+}
 
 export default LocaleLayout;
