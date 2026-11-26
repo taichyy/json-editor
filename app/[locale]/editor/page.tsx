@@ -7,6 +7,6 @@ const EditorPage = () => {
     const router = useRouter();
 
     return <JsonEditor onBackToHome={() => router.push('/')} />;
-}
+};
 
 export default EditorPage;

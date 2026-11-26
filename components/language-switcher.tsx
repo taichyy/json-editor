@@ -5,7 +5,7 @@ import { useTransition } from 'react';
 
 import { useRouter, usePathname } from '../i18n/navigation';
 
-const LanguageSwitcher = () => {
+export const LanguageSwitcher = () => {
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
@@ -39,6 +39,4 @@ const LanguageSwitcher = () => {
             {locale === 'en' ? '中文' : 'EN'}
         </button>
     );
-}
-
-export { LanguageSwitcher };
+};

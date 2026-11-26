@@ -1,20 +1,21 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-geist-sans)", "Geist", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "GeistMono", "Menlo", "monospace"],
-      },
+    darkMode: "class",
+    content: [
+        "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+        "./components/**/*.{js,ts,jsx,tsx,mdx}",
+        "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ["var(--font-geist-sans)", "Geist", "system-ui", "-apple-system", "sans-serif"],
+                mono: ["var(--font-geist-mono)", "GeistMono", "Menlo", "monospace"],
+            },
+        },
     },
-  },
-  plugins: [],
+    plugins: [],
 };
+
 export default config;

@@ -85,7 +85,7 @@ const JsonPreview = () => {
       `}</style>
         </div>
     );
-}
+};
 
 const SyntaxHighlight = (props: { code: string }) => {
     const { code } = props;
@@ -131,10 +131,10 @@ const SyntaxHighlight = (props: { code: string }) => {
             ))}
         </>
     );
-}
+};
 
 // ── Main component ────────────────────────────────────────────────────────────
-const LandingPage = (props: LandingPageProps) => {
+export const LandingPage = (props: LandingPageProps) => {
     const { onEnter } = props;
 
     const t = useTranslations();
@@ -296,6 +296,4 @@ const LandingPage = (props: LandingPageProps) => {
             </footer>
         </div>
     );
-}
-
-export { LandingPage };
+};

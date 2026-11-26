@@ -4,9 +4,9 @@ import { Moon, Sun } from 'lucide-react';
 
 import { useTheme } from './theme-provider';
 
-const ThemeToggle = (props: { className?: string }) => {
+export const ThemeToggle = (props: { className?: string }) => {
     const { className = '' } = props;
-    
+
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === 'dark';
 
@@ -48,6 +48,4 @@ const ThemeToggle = (props: { className?: string }) => {
             )}
         </button>
     );
-}
-
-export { ThemeToggle };
+};

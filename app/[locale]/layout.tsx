@@ -10,12 +10,13 @@ type Props = {
     params: Promise<{ locale: string }>;
 };
 
-export async function generateStaticParams() {
+export const generateStaticParams = async () => {
     return routing.locales.map((locale) => ({ locale }));
-}
+};
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { locale } = await params;
+export const generateMetadata = async (props: Props): Promise<Metadata> => {
+    const { locale } = await props.params;
+
     const isZhTW = locale === 'zh-TW';
 
     return {
@@ -31,12 +32,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             type: 'website',
         },
     };
-}
+};
 
 const LocaleLayout = async (props: Props) => {
-    const { children, params } = props;
-    
-    const { locale } = await params;
+    const { children } = props;
+    const { locale } = await props.params;
 
     // Validate locale
     if (!routing.locales.includes(locale as any)) {
@@ -51,6 +51,6 @@ const LocaleLayout = async (props: Props) => {
             {children}
         </NextIntlClientProvider>
     );
-}
+};
 
 export default LocaleLayout;

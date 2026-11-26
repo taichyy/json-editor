@@ -1,30 +1,30 @@
 'use client';
 
-import {
-    Upload, 
-    Download, 
-    FileText, 
-    Code, 
-    Database, 
-    Plus, 
-    Trash2,
-    ChevronDown, 
-    ChevronRight, 
-    Table, 
-    X, 
-    Minimize2, 
-    Maximize2,
-    Copy, 
-    GitCompare, 
-    Trash, 
-    ArrowLeft, 
-    Check
-} from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import {
+    Upload,
+    Download,
+    FileText,
+    Code,
+    Database,
+    Plus,
+    Trash2,
+    ChevronDown,
+    ChevronRight,
+    Table,
+    X,
+    Minimize2,
+    Maximize2,
+    Copy,
+    GitCompare,
+    Trash,
+    ArrowLeft,
+    Check,
+} from 'lucide-react';
 
 import { useTheme } from './theme-provider';
 import { ThemeToggle } from './theme-toggle';
@@ -830,7 +830,7 @@ const EnhancedTreeView: React.FC<{
     path?: string;
 }> = (props) => {
     const { data, onChange, onArrayTableRequest } = props;
-    
+
     const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
     const t = useTranslations('editor');
 
