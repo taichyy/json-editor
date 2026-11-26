@@ -30,7 +30,11 @@
         },
         "export": {
             "title": "Export anywhere",
-            "description": "JSON, plain text, JavaScript object, or PHP array."
+            "description": "Export as JSON, plain text, JavaScript object, or PHP array."
+        },
+        "merge": {
+            "title": "JSON merge",
+            "description": "Deep-merge two documents. Override wins, arrays replace or concat."
         }
     },
     "editor": {
@@ -38,7 +42,7 @@
         "tabEditor": "Editor",
         "tabCompare": "Compare",
         "clearData": "Clear",
-        "confirmClear": "Clear all data? This cannot be undone.",
+        "confirmClear": "Clear all data. This cannot be undone.",
         "import": "Import",
         "uploadFile": "Upload file",
         "clickToUpload": "Click to upload .json",
@@ -53,7 +57,7 @@
         "treeEditor": "Tree editor",
         "treeEditorHint": "Click any value to edit · arrays open as table",
         "noData": "No data",
-        "noDataHint": "Upload a file or paste JSON to get started",
+        "noDataHint": "Choose a file, paste JSON, or drop a file anywhere on this page.",
         "jsonSource": "JSON source",
         "invalid": "Invalid",
         "diff": "Diff",
@@ -61,7 +65,7 @@
         "minify": "Minify",
         "copy": "Copy",
         "copied": "Copied",
-        "shortcutHint": "Ctrl+F: Format · Ctrl+Shift+M: Minify · Ctrl+Shift+C: Copy",
+        "shortcutHint": "Shift+Alt+F format · Ctrl+Shift+M minify · Ctrl+F find",
         "jsonDiff": "JSON diff",
         "jsonDiffHint": "Paste two JSON documents to see differences highlighted",
         "formatBoth": "Format both",
@@ -87,6 +91,47 @@
         "array": "Array [{count}]",
         "tableViewBtn": "Table view",
         "jsObjectCopied": "JavaScript object copied to clipboard!",
-        "phpArrayCopied": "PHP array copied to clipboard!"
+        "phpArrayCopied": "PHP array copied to clipboard!",
+        "tabMerge": "Merge",
+        "clickAgainToClear": "Click again to clear",
+        "pasteClipboard": "Paste",
+        "loadSample": "Sample",
+        "orDropAnywhere": "or drop a file anywhere",
+        "errorAt": "Line {line}, column {column}",
+        "chooseFile": "Choose file",
+        "indentation": "Indentation",
+        "indentTab": "Tab",
+        "indentSpaces": "{count} spaces",
+        "diffTitle": "Compare original with your edits",
+        "copyTitle": "Copy to clipboard",
+        "sizeStats": "{size} · minified {minified} (−{saved}%)",
+        "closeEsc": "Close (Esc)",
+        "dropToOpen": "Drop to open JSON file",
+        "clipboardEmpty": "Clipboard is empty",
+        "clipboardDenied": "Clipboard access blocked. Paste into the text box instead.",
+        "jsonMerge": "JSON merge",
+        "jsonMergeHint": "Keys in Override win. Nested objects are merged recursively.",
+        "arrays": "Arrays",
+        "arraysReplace": "Replace",
+        "arraysConcat": "Concatenate",
+        "mergeBase": "Base",
+        "mergeOverride": "Override",
+        "mergeResult": "Result",
+        "openInEditor": "Open in editor",
+        "mergeEmpty": "Paste valid JSON into both Base and Override to see the merged result."
+    },
+    "showcase": {
+        "title": "Five ways to look at the same data",
+        "subtitle": "Every view edits the same document, so you can switch whenever it helps.",
+        "errorSample": "Line 4, column 17 · Expected comma"
+    },
+    "dropZone": {
+        "title": "Drop a JSON file here",
+        "subtitle": "or click to choose one. It opens straight in the editor.",
+        "paste": "Paste from clipboard",
+        "sample": "Try with sample data",
+        "invalid": "That is not valid JSON.",
+        "invalidAt": "Not valid JSON: line {line}, column {column}.",
+        "clipboardDenied": "Clipboard access was blocked. Open the editor and paste with Ctrl+V."
     }
 }

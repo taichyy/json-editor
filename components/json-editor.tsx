@@ -13,19 +13,34 @@ import {
     Download,
     FileText,
     Database,
+    GitMerge,
+    Sparkles,
     Minimize2,
     Maximize2,
     ArrowLeft,
     GitCompare,
     ChevronDown,
     ChevronRight,
+    ClipboardPaste,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
 import { useTranslations } from "next-intl";
-import { useState, useRef, useEffect } from "react";
 import ReactDiffViewer from "react-diff-viewer-continued";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
+import {
+    TIndent,
+    byteSize,
+    stringify,
+    formatBytes,
+    SAMPLE_JSON,
+    TParseError,
+    INDENT_OPTIONS,
+    describeParseError,
+    EDITOR_STORAGE_KEYS,
+} from "@/lib/json-utils";
+import { JsonMerge } from "./json-merge";
 import { useTheme } from "./theme-provider";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
@@ -56,6 +71,8 @@ const cv = {
 };
 
 // ─── Main JsonEditor ──────────────────────────────────────────────────────────
+type TTab = 'editor' | 'compare' | 'merge';
+
 interface JsonEditorProps {
     onBackToHome?: () => void;
 }
@@ -75,8 +92,15 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
     const [isImportExpanded, setIsImportExpanded] = useState<boolean>(true);
     const [jsonText, setJsonText] = useState<string>('');
     const [isJsonMinified, setIsJsonMinified] = useState<boolean>(false);
-    const [editorError, setEditorError] = useState<string>('');
-    const [activeTab, setActiveTab] = useState<'editor' | 'compare'>('editor');
+    const [editorError, setEditorError] = useState<TParseError | null>(null);
+    const [importError, setImportError] = useState<TParseError | null>(null);
+    const [activeTab, setActiveTab] = useState<TTab>('editor');
+    const [indent, setIndent] = useState<TIndent>('2');
+    const [isDiffOpen, setIsDiffOpen] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [confirmingClear, setConfirmingClear] = useState(false);
+    const [toast, setToast] = useState('');
+    const indentRef = useRef<TIndent>('2');
     const [leftJson, setLeftJson] = useState<string>('');
     const [rightJson, setRightJson] = useState<string>('');
     const [leftJsonError, setLeftJsonError] = useState<string>('');
@@ -85,14 +109,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
     const [copySuccess, setCopySuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const STORAGE_KEYS = {
-        jsonData: 'json-editor-data',
-        jsonText: 'json-editor-text',
-        originalJsonText: 'json-editor-original',
-        activeTab: 'json-editor-tab',
-        leftJson: 'json-editor-left',
-        rightJson: 'json-editor-right',
-    };
+    const STORAGE_KEYS = EDITOR_STORAGE_KEYS;
 
     const saveToStorage = () => {
         try {
@@ -102,6 +119,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
             localStorage.setItem(STORAGE_KEYS.activeTab, activeTab);
             localStorage.setItem(STORAGE_KEYS.leftJson, leftJson);
             localStorage.setItem(STORAGE_KEYS.rightJson, rightJson);
+            localStorage.setItem(STORAGE_KEYS.indent, indent);
         } catch { /* ignore */ }
     };
 
@@ -113,13 +131,15 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
             const savedActiveTab = localStorage.getItem(STORAGE_KEYS.activeTab);
             const savedLeftJson = localStorage.getItem(STORAGE_KEYS.leftJson);
             const savedRightJson = localStorage.getItem(STORAGE_KEYS.rightJson);
+            const savedIndent = localStorage.getItem(STORAGE_KEYS.indent) as TIndent | null;
             if (savedJsonData && savedJsonText) {
                 setJsonData(JSON.parse(savedJsonData));
                 setJsonText(savedJsonText);
                 setIsImportExpanded(false);
             }
             if (savedOriginalJsonText) setOriginalJsonText(savedOriginalJsonText);
-            if (savedActiveTab) setActiveTab(savedActiveTab as 'editor' | 'compare');
+            if (savedActiveTab === 'editor' || savedActiveTab === 'compare' || savedActiveTab === 'merge') setActiveTab(savedActiveTab);
+            if (savedIndent && INDENT_OPTIONS.includes(savedIndent)) { setIndent(savedIndent); indentRef.current = savedIndent; }
             if (savedLeftJson) setLeftJson(savedLeftJson);
             if (savedRightJson) setRightJson(savedRightJson);
         } catch { /* ignore */ }
@@ -129,52 +149,103 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
         setJsonData(null); setJsonText(''); setOriginalJsonText('');
         setActiveTab('editor'); setLeftJson(''); setRightJson('');
         setLeftJsonError(''); setRightJsonError('');
-        setError(''); setEditorError(''); setIsImportExpanded(true);
-        Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
+        setError(''); setEditorError(null); setImportError(null); setIsImportExpanded(true);
+        Object.values(STORAGE_KEYS).forEach(k => { if (k !== STORAGE_KEYS.indent) localStorage.removeItem(k); });
     };
 
     useEffect(() => { loadFromStorage(); }, []);
     useEffect(() => {
         if (jsonData || jsonText || originalJsonText || leftJson || rightJson) saveToStorage();
-    }, [jsonData, jsonText, originalJsonText, activeTab, leftJson, rightJson]);
+    }, [jsonData, jsonText, originalJsonText, activeTab, leftJson, rightJson, indent]);
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
+    const showToast = (message: string) => {
+        setToast(message);
+        setTimeout(() => setToast(''), 1800);
+    };
+
+    // Esc closes the diff modal and the array table modal
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key !== 'Escape') return;
+            setIsDiffOpen(false);
+            setArrayTableModal(null);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+    // Load any JSON text (paste, file, clipboard, sample) into the editor
+    const loadJsonText = useCallback((text: string): boolean => {
+        if (!text.trim()) return false;
+        try {
+            const parsed = JSON.parse(text);
+            const formatted = stringify(parsed, indentRef.current);
+            setJsonData(parsed); setJsonText(formatted); setOriginalJsonText(formatted);
+            setIsJsonMinified(false); setError(''); setImportError(null); setEditorError(null);
+            setIsImportExpanded(false); setActiveTab('editor');
+            return true;
+        } catch (e) {
+            setImportError(describeParseError(text, e));
+            setError(t('invalidJsonFormat'));
+            setIsImportExpanded(true);
+            return false;
+        }
+    }, [t]);
+
+    const readFile = (file: File) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            try {
-                const content = e.target?.result as string;
-                const parsed = JSON.parse(content);
-                const formatted = JSON.stringify(parsed, null, 2);
-                setJsonData(parsed); setJsonText(formatted);
-                setOriginalJsonText(formatted); setError(''); setIsImportExpanded(false);
-            } catch { setError(t('invalidJsonFile')); }
+            if (!loadJsonText((e.target?.result as string) || '')) setError(t('invalidJsonFile'));
         };
         reader.readAsText(file);
     };
 
+    const pasteFromClipboard = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (!text.trim()) { showToast(t('clipboardEmpty')); return; }
+            loadJsonText(text);
+        } catch {
+            showToast(t('clipboardDenied'));
+        }
+    };
+
+    const loadSample = () => loadJsonText(JSON.stringify(SAMPLE_JSON));
+
+    const changeIndent = (next: TIndent) => {
+        setIndent(next); indentRef.current = next;
+        if (jsonData !== null && !isJsonMinified) setJsonText(stringify(jsonData, next));
+    };
+
+    const onDrop = (e: React.DragEvent) => {
+        e.preventDefault(); setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) readFile(file);
+    };
+
+
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) readFile(file);
+        event.target.value = '';
+    };
+
     const handleTextInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = event.target.value;
-        if (!text.trim()) { setJsonData(null); setJsonText(''); setOriginalJsonText(''); setError(''); return; }
-        try {
-            const parsed = JSON.parse(text);
-            const formatted = JSON.stringify(parsed, null, 2);
-            setJsonData(parsed); setJsonText(formatted);
-            setOriginalJsonText(formatted); setError(''); setIsImportExpanded(false);
-        } catch { setError(t('invalidJsonFormat')); }
+        if (!text.trim()) { setError(''); setImportError(null); return; }
+        if (loadJsonText(text)) event.target.value = '';
     };
 
     const updateJsonData = (newData: any) => {
         setJsonData(newData);
-        setJsonText(isJsonMinified ? JSON.stringify(newData) : JSON.stringify(newData, null, 2));
+        setJsonText(isJsonMinified ? JSON.stringify(newData) : stringify(newData, indent));
     };
 
     const toggleJsonFormat = () => {
         if (jsonData) {
             const next = !isJsonMinified;
             setIsJsonMinified(next);
-            setJsonText(next ? JSON.stringify(jsonData) : JSON.stringify(jsonData, null, 2));
+            setJsonText(next ? JSON.stringify(jsonData) : stringify(jsonData, indent));
         }
     };
 
@@ -186,7 +257,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
     };
 
     const formatJsonForComparison = (s: string): string => {
-        try { return JSON.stringify(JSON.parse(s), null, 2); } catch { return s; }
+        try { return stringify(JSON.parse(s), indent); } catch { return s; }
     };
 
     const validateComparisonJson = (value: string, setErr: (e: string) => void) => {
@@ -204,7 +275,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
 
     const exportAsJson = () => {
         if (!jsonData) return;
-        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+        const blob = new Blob([stringify(jsonData, indent)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = 'data.json'; a.click(); URL.revokeObjectURL(url);
@@ -212,20 +283,20 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
 
     const exportAsJavaScript = () => {
         if (!jsonData) return;
-        navigator.clipboard.writeText(`const data = ${JSON.stringify(jsonData, null, 2)};`);
-        alert(t('jsObjectCopied'));
+        navigator.clipboard.writeText(`const data = ${stringify(jsonData, indent)};`);
+        showToast(t('jsObjectCopied'));
     };
 
     const exportAsPhp = () => {
         if (!jsonData) return;
         const phpCode = `<?php\n$data = ${jsonToPhp(jsonData)};\n?>`;
         navigator.clipboard.writeText(phpCode);
-        alert(t('phpArrayCopied'));
+        showToast(t('phpArrayCopied'));
     };
 
     const exportAsText = () => {
         if (!jsonData) return;
-        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'text/plain' });
+        const blob = new Blob([stringify(jsonData, indent)], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = 'data.txt'; a.click(); URL.revokeObjectURL(url);
@@ -248,6 +319,15 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
         return String(obj);
     };
 
+    // ── Size stats for the JSON source footer ──
+    const sizeStats = (() => {
+        if (!jsonText) return '';
+        const current = byteSize(jsonText);
+        const minified = jsonData !== null ? byteSize(JSON.stringify(jsonData)) : current;
+        const saved = current > 0 ? Math.round((1 - minified / current) * 100) : 0;
+        return t('sizeStats', { size: formatBytes(current), minified: formatBytes(minified), saved: Math.max(saved, 0) });
+    })();
+
     // ── Shared button styles ──
     const btnGhost = `inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium
     transition-colors active:scale-[0.97]
@@ -257,7 +337,36 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
     border transition-colors active:scale-[0.97]`;
 
     return (
-        <div className="h-screen flex flex-col" style={{ backgroundColor: cv.bgPrimary, color: cv.textPrimary }}>
+        <div
+            className="relative h-screen flex flex-col"
+            style={{ backgroundColor: cv.bgPrimary, color: cv.textPrimary }}
+            onDragOver={e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); setIsDragging(true); } }}
+            onDragLeave={e => { if (e.currentTarget === e.target) setIsDragging(false); }}
+            onDrop={onDrop}
+        >
+            {/* ── Drop overlay ── */}
+            {isDragging && (
+                <div
+                    className="absolute inset-0 z-[60] flex items-center justify-center pointer-events-none"
+                    style={{ backgroundColor: 'rgba(79,70,229,0.08)', border: `2px dashed ${cv.accent}` }}
+                >
+                    <div className="px-4 py-3 rounded-lg text-sm font-medium shadow-md" style={{ backgroundColor: cv.bgSurface, color: cv.accentText }}>
+                        <Upload className="inline w-4 h-4 mr-2 -mt-0.5" strokeWidth={2} />
+                        {t('dropToOpen')}
+                    </div>
+                </div>
+            )}
+
+            {/* ── Toast ── */}
+            {toast && (
+                <div
+                    role="status"
+                    className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-lg text-xs font-medium shadow-lg"
+                    style={{ backgroundColor: cv.textPrimary, color: cv.bgSurface }}
+                >
+                    {toast}
+                </div>
+            )}
 
             {/* ── Header ── */}
             <header
@@ -285,7 +394,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
 
                     {/* Tabs */}
                     <nav className="flex items-center gap-1">
-                        {(['editor', 'compare'] as const).map((tab) => (
+                        {(['editor', 'compare', 'merge'] as const).map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -295,8 +404,10 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                     color: activeTab === tab ? cv.accentText : cv.textSecondary,
                                 }}
                             >
-                                {tab === 'editor' ? <Code className="w-3 h-3" strokeWidth={2} /> : <GitCompare className="w-3 h-3" strokeWidth={2} />}
-                                {tab === 'editor' ? t('tabEditor') : t('tabCompare')}
+                                {tab === 'editor' && <Code className="w-3 h-3" strokeWidth={2} />}
+                                {tab === 'compare' && <GitCompare className="w-3 h-3" strokeWidth={2} />}
+                                {tab === 'merge' && <GitMerge className="w-3 h-3" strokeWidth={2} />}
+                                {tab === 'editor' ? t('tabEditor') : tab === 'compare' ? t('tabCompare') : t('tabMerge')}
                             </button>
                         ))}
                     </nav>
@@ -307,14 +418,20 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                     {(jsonData || leftJson || rightJson) && (
                         <button
                             onClick={() => {
-                                if (confirm(t('confirmClear'))) clearAllData();
+                                if (!confirmingClear) {
+                                    setConfirmingClear(true);
+                                    setTimeout(() => setConfirmingClear(false), 3000);
+                                    return;
+                                }
+                                setConfirmingClear(false);
+                                clearAllData();
                             }}
                             className={`${btnGhost}`}
-                            style={{ color: cv.error }}
-                            title={t('clearData')}
+                            style={{ color: cv.error, backgroundColor: confirmingClear ? cv.errorSubtle : undefined }}
+                            title={t('confirmClear')}
                         >
                             <Trash className="w-3.5 h-3.5" strokeWidth={2} />
-                            <span className="hidden sm:inline">{t('clearData')}</span>
+                            <span className="hidden sm:inline">{confirmingClear ? t('clickAgainToClear') : t('clearData')}</span>
                         </button>
                     )}
                     <LanguageSwitcher />
@@ -350,6 +467,25 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
 
                                     {isImportExpanded && (
                                         <div className="px-4 pb-4 space-y-3">
+                                            {/* Quick actions */}
+                                            <div className="grid grid-cols-2 gap-1.5">
+                                                <button
+                                                    onClick={pasteFromClipboard}
+                                                    className={`${btnOutline} justify-center`}
+                                                    style={{ borderColor: cv.borderDefault, color: cv.textSecondary }}
+                                                >
+                                                    <ClipboardPaste className="w-3 h-3" strokeWidth={2} />
+                                                    {t('pasteClipboard')}
+                                                </button>
+                                                <button
+                                                    onClick={loadSample}
+                                                    className={`${btnOutline} justify-center`}
+                                                    style={{ borderColor: cv.borderDefault, color: cv.textSecondary }}
+                                                >
+                                                    <Sparkles className="w-3 h-3" strokeWidth={2} />
+                                                    {t('loadSample')}
+                                                </button>
+                                            </div>
                                             {/* File drop */}
                                             <div>
                                                 <p className="text-xs font-medium mb-1.5" style={{ color: cv.textSecondary }}>{t('uploadFile')}</p>
@@ -360,9 +496,10 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                     onMouseEnter={e => (e.currentTarget.style.borderColor = cv.accent)}
                                                     onMouseLeave={e => (e.currentTarget.style.borderColor = cv.borderDefault)}
                                                 >
-                                                    <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+                                                    <input ref={fileInputRef} type="file" accept=".json,application/json,.txt" onChange={handleFileUpload} className="hidden" />
                                                     <Upload className="mx-auto w-4 h-4 mb-1" style={{ color: cv.textMuted }} strokeWidth={1.75} />
                                                     <p className="text-xs" style={{ color: cv.accent }}>{t('clickToUpload')}</p>
+                                                    <p className="text-[10px] mt-0.5" style={{ color: cv.textMuted }}>{t('orDropAnywhere')}</p>
                                                 </div>
                                             </div>
                                             {/* Paste */}
@@ -382,8 +519,11 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                 />
                                             </div>
                                             {error && (
-                                                <div className="px-2.5 py-2 rounded text-xs" style={{ backgroundColor: cv.errorSubtle, color: cv.error }}>
-                                                    {error}
+                                                <div className="px-2.5 py-2 rounded text-xs space-y-0.5" style={{ backgroundColor: cv.errorSubtle, color: cv.error }}>
+                                                    <p className="font-medium">{error}</p>
+                                                    {importError?.line && (
+                                                        <p>{t('errorAt', { line: importError.line, column: importError.column ?? 1 })}</p>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -452,12 +592,38 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                         </div>
                                     ) : (
                                         <div className="h-full flex items-center justify-center">
-                                            <div className="text-center max-w-[200px]">
+                                            <div className="text-center max-w-[260px]">
                                                 <FileText className="mx-auto w-10 h-10 mb-3" style={{ color: cv.textMuted }} strokeWidth={1.25} />
                                                 <p className="text-sm font-medium mb-1" style={{ color: cv.textPrimary }}>{t('noData')}</p>
-                                                <p className="text-xs leading-relaxed" style={{ color: cv.textTertiary }}>
+                                                <p className="text-xs leading-relaxed mb-4" style={{ color: cv.textTertiary }}>
                                                     {t('noDataHint')}
                                                 </p>
+                                                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                                                    <button
+                                                        onClick={() => fileInputRef.current?.click()}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold text-white transition-colors active:scale-[0.97]"
+                                                        style={{ backgroundColor: cv.accent }}
+                                                    >
+                                                        <Upload className="w-3 h-3" strokeWidth={2} />
+                                                        {t('chooseFile')}
+                                                    </button>
+                                                    <button
+                                                        onClick={pasteFromClipboard}
+                                                        className={btnOutline}
+                                                        style={{ borderColor: cv.borderDefault, color: cv.textSecondary }}
+                                                    >
+                                                        <ClipboardPaste className="w-3 h-3" strokeWidth={2} />
+                                                        {t('pasteClipboard')}
+                                                    </button>
+                                                    <button
+                                                        onClick={loadSample}
+                                                        className={btnOutline}
+                                                        style={{ borderColor: cv.borderDefault, color: cv.textSecondary }}
+                                                    >
+                                                        <Sparkles className="w-3 h-3" strokeWidth={2} />
+                                                        {t('loadSample')}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -485,13 +651,25 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                     <span
                                                         className="text-[10px] px-2 py-0.5 rounded font-medium"
                                                         style={{ backgroundColor: cv.errorSubtle, color: cv.error }}
-                                                        title={editorError}
+                                                        title={editorError.message}
                                                     >
                                                         {t('invalid')}
                                                     </span>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-1">
+                                                <select
+                                                    value={indent}
+                                                    onChange={e => changeIndent(e.target.value as TIndent)}
+                                                    className="px-1.5 py-1 rounded text-xs outline-none"
+                                                    style={{ backgroundColor: 'transparent', border: `1px solid ${cv.borderDefault}`, color: cv.textSecondary }}
+                                                    title={t('indentation')}
+                                                    aria-label={t('indentation')}
+                                                >
+                                                    {INDENT_OPTIONS.map(o => (
+                                                        <option key={o} value={o}>{o === 'tab' ? t('indentTab') : t('indentSpaces', { count: Number(o) })}</option>
+                                                    ))}
+                                                </select>
                                                 {originalJsonText && jsonText && originalJsonText !== jsonText && (
                                                     <button
                                                         onClick={exportToCompare}
@@ -499,7 +677,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                         style={{ borderColor: cv.borderDefault, color: cv.warning }}
                                                         onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.warningSubtle)}
                                                         onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-                                                        title="Compare original vs edited"
+                                                        title={t('diffTitle')}
                                                     >
                                                         <GitCompare className="w-3 h-3" strokeWidth={2} />
                                                         {t('diff')}
@@ -528,7 +706,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                     }}
                                                     onMouseEnter={e => { if (!copySuccess) e.currentTarget.style.backgroundColor = cv.bgOverlay; }}
                                                     onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                                                    title="Copy to clipboard"
+                                                    title={t('copyTitle')}
                                                 >
                                                     {copySuccess
                                                         ? <Check className="w-3 h-3" strokeWidth={2.5} />
@@ -550,18 +728,18 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                     setJsonText(v);
                                                     try {
                                                         setJsonData(JSON.parse(v));
-                                                        setError(''); setEditorError('');
+                                                        setError(''); setEditorError(null);
                                                     } catch (e) {
-                                                        setEditorError(e instanceof Error ? e.message : 'Invalid JSON');
+                                                        setEditorError(describeParseError(v, e));
                                                     }
                                                 }}
                                                 onMount={(editor, monaco) => {
                                                     editor.addAction({
                                                         id: 'format-json', label: 'Format JSON',
-                                                        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF],
+                                                        keybindings: [monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF],
                                                         run: () => {
                                                             try {
-                                                                editor.setValue(JSON.stringify(JSON.parse(editor.getValue()), null, 2));
+                                                                editor.setValue(stringify(JSON.parse(editor.getValue()), indentRef.current));
                                                                 setIsJsonMinified(false);
                                                             } catch { }
                                                         }
@@ -588,7 +766,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                 options={{
                                                     minimap: { enabled: false }, fontSize: 12, lineNumbers: 'on',
                                                     scrollBeyondLastLine: false, automaticLayout: true,
-                                                    tabSize: 2, insertSpaces: true, wordWrap: 'on',
+                                                    tabSize: indent === '4' ? 4 : 2, insertSpaces: indent !== 'tab', wordWrap: 'on',
                                                     formatOnPaste: true, formatOnType: true, folding: true,
                                                     bracketPairColorization: { enabled: true },
                                                     renderLineHighlight: 'line',
@@ -600,14 +778,36 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                 }}
                                             />
                                         </div>
-                                        <div className="px-4 py-1.5 text-[10px]" style={{ color: cv.textMuted, borderTop: `1px solid ${cv.borderSubtle}` }}>
-                                            {t('shortcutHint')}
+                                        <div
+                                            className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-4 py-1.5 text-[10px]"
+                                            style={{ color: cv.textMuted, borderTop: `1px solid ${cv.borderSubtle}` }}
+                                        >
+                                            {editorError ? (
+                                                <span style={{ color: cv.error }}>
+                                                    {editorError.line ? `${t('errorAt', { line: editorError.line, column: editorError.column ?? 1 })} · ` : ''}
+                                                    {editorError.message}
+                                                </span>
+                                            ) : (
+                                                <span>{sizeStats}</span>
+                                            )}
+                                            <span className="hidden xl:inline">{t('shortcutHint')}</span>
                                         </div>
                                     </div>
                                 </Panel>
                             </>
                         )}
                     </PanelGroup>
+                ) : activeTab === 'merge' ? (
+                    <JsonMerge
+                        monacoTheme={monacoTheme}
+                        indent={indent}
+                        onOpenInEditor={(data) => {
+                            const text = stringify(data, indent);
+                            setJsonData(data); setJsonText(text); setOriginalJsonText(text);
+                            setIsJsonMinified(false); setEditorError(null); setIsImportExpanded(false);
+                            setActiveTab('editor');
+                        }}
+                    />
                 ) : (
                     /* ── Compare tab ── */
                     <div className="h-full flex flex-col">
@@ -645,7 +845,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-hidden">
+                        <div className="relative flex-1 overflow-hidden">
                             <PanelGroup direction="horizontal">
                                 {/* Left */}
                                 <Panel defaultSize={50} minSize={30}>
@@ -694,7 +894,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                             {leftJson && rightJson && !leftJsonError && !rightJsonError && (
                                 <div className="absolute bottom-6 right-6 z-10">
                                     <button
-                                        onClick={() => document.getElementById('diff-modal')?.classList.remove('hidden')}
+                                        onClick={() => setIsDiffOpen(true)}
                                         className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white shadow-md transition-colors"
                                         style={{ backgroundColor: cv.accent }}
                                         onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.accentHover)}
@@ -711,12 +911,15 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
             </div>
 
             {/* ── Diff modal ── */}
+            {isDiffOpen && (
             <div
-                id="diff-modal"
-                className="hidden fixed inset-0 flex items-center justify-center z-50 p-4"
+                className="fixed inset-0 flex items-center justify-center z-50 p-4"
                 style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+                onClick={e => { if (e.target === e.currentTarget) setIsDiffOpen(false); }}
             >
                 <div
+                    role="dialog"
+                    aria-modal="true"
                     className="rounded-xl shadow-2xl w-full max-w-7xl overflow-hidden"
                     style={{ height: '90vh', backgroundColor: cv.bgSurface, border: `1px solid ${cv.borderDefault}` }}
                 >
@@ -726,7 +929,8 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                     >
                         <p className="text-sm font-semibold" style={{ color: cv.textPrimary }}>{t('diffView')}</p>
                         <button
-                            onClick={() => document.getElementById('diff-modal')?.classList.add('hidden')}
+                            onClick={() => setIsDiffOpen(false)}
+                            title={t('closeEsc')}
                             className="w-7 h-7 flex items-center justify-center rounded-md transition-colors"
                             style={{ color: cv.textSecondary }}
                             onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.bgOverlay)}
@@ -755,12 +959,14 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                     </div>
                 </div>
             </div>
+            )}
 
             {/* ── Array table modal ── */}
             {arrayTableModal?.isOpen && (
                 <div
                     className="fixed inset-0 flex items-center justify-center z-50 p-4"
                     style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+                    onClick={e => { if (e.target === e.currentTarget) setArrayTableModal(null); }}
                 >
                     <div
                         className="rounded-xl shadow-2xl w-full max-w-6xl overflow-hidden"

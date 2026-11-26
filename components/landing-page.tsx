@@ -1,10 +1,12 @@
 "use client"
 
+import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, GitCompare, Network, Table2, Code2, Download } from "lucide-react";
 
 import { ThemeToggle } from "./theme-toggle";
+import { LandingShowcase } from "./landing-showcase";
+import { LandingDropZone } from "./landing-drop-zone";
 import { LanguageSwitcher } from "./language-switcher";
 
 interface LandingPageProps {
@@ -139,13 +141,6 @@ export const LandingPage = (props: LandingPageProps) => {
 
     const t = useTranslations();
 
-    const features = [
-        { icon: Network, title: t('features.tree.title'), description: t('features.tree.description') },
-        { icon: Table2, title: t('features.table.title'), description: t('features.table.description') },
-        { icon: Code2, title: t('features.monaco.title'), description: t('features.monaco.description') },
-        { icon: GitCompare, title: t('features.diff.title'), description: t('features.diff.description') },
-        { icon: Download, title: t('features.export.title'), description: t('features.export.description') },
-    ];
 
     return (
         <div
@@ -235,51 +230,17 @@ export const LandingPage = (props: LandingPageProps) => {
                 </div>
             </main>
 
-            {/* ── Features ── */}
+            {/* ── Views showcase ── */}
             <section
-                className="w-full max-w-6xl mx-auto px-6 py-16"
+                className="w-full max-w-6xl mx-auto px-6 py-16 lg:py-20"
                 style={{ borderTop: '1px solid var(--border-subtle)' }}
             >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
-                    style={{ backgroundColor: 'var(--border-subtle)', border: '1px solid var(--border-subtle)', borderRadius: '12px', overflow: 'hidden' }}
-                >
-                    {features.map(({ icon: Icon, title, description }) => (
-                        <div
-                            key={title}
-                            className="flex flex-col gap-2.5 p-6"
-                            style={{ backgroundColor: 'var(--bg-surface)' }}
-                        >
-                            <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                                style={{ backgroundColor: 'var(--accent-subtle)' }}
-                            >
-                                <Icon className="w-4 h-4" style={{ color: 'var(--accent)' }} strokeWidth={1.75} />
-                            </div>
-                            <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</p>
-                            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{description}</p>
-                        </div>
-                    ))}
+                <LandingShowcase />
+            </section>
 
-                    {/* Last cell — CTA tile */}
-                    <div
-                        className="flex flex-col justify-between gap-4 p-6"
-                        style={{ backgroundColor: 'var(--accent-subtle)' }}
-                    >
-                        <p className="text-sm leading-relaxed font-medium" style={{ color: 'var(--accent-text)' }}>
-                            {t('landing.localProcessing')}
-                        </p>
-                        <button
-                            onClick={onEnter}
-                            className="self-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all active:scale-[0.97]"
-                            style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
-                            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
-                            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
-                        >
-                            {t('nav.openEditor')}
-                            <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
-                        </button>
-                    </div>
-                </div>
+            {/* ── Start here: drop zone ── */}
+            <section className="w-full max-w-3xl mx-auto px-6 pb-20">
+                <LandingDropZone onOpen={onEnter} />
             </section>
 
             {/* ── Footer ── */}
