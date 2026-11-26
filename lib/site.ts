@@ -1,3 +1,3 @@
-export const SITE_URL = "https://json-editor.heytai.dev";
+export const SITE_URL = "https://jsonowl.heytai.dev";
 
-export const REPO_URL = "https://github.com/taichyy/json-editor";
+export const REPO_URL = "https://github.com/taichyy/json-owl";

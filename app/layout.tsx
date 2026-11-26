@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 import { ThemeProvider } from "../components/theme-provider";
 
 const geistSans = localFont({
@@ -19,7 +20,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://json-editor.heytai.dev'),
+    metadataBase: new URL(SITE_URL),
     title: 'JSON Owl · A simple JSON editor',
     description:
         'JSON Owl is a simple online JSON editor with tree and table editing, a code editor, diff and merge. Open source, and your data never leaves your browser.',
