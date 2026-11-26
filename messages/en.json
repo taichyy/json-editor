@@ -1,15 +1,18 @@
 {
     "nav": {
-        "openEditor": "Open editor"
+        "openEditor": "Open editor",
+        "github": "Source code on GitHub"
     },
     "landing": {
-        "badge": "Free · No login · Runs in browser",
+        "badge": "Free · Open source · Runs in your browser",
         "headline": "Edit JSON\nwithout friction.",
-        "subheadline": "Tree view, table view, Monaco editor, and diff comparison — all local, all fast. Your data never leaves the browser.",
+        "subheadline": "Tree view, table view, a code editor, diff and merge. Everything runs in your browser, and nothing is uploaded.",
         "startEditing": "Start editing",
         "noSignup": "No signup required",
-        "localProcessing": "All processing happens locally. Zero telemetry. Open tab and go.",
-        "noDataSent": "No data is sent to any server."
+        "localProcessing": "Everything runs in your browser. Your JSON is never uploaded to a server.",
+        "noDataSent": "Runs entirely in your browser. Nothing is uploaded.",
+        "viewSource": "View source on GitHub",
+        "openSource": "Open source on GitHub"
     },
     "features": {
         "tree": {
@@ -57,7 +60,7 @@
         "treeEditor": "Tree editor",
         "treeEditorHint": "Click any value to edit · arrays open as table",
         "noData": "No data",
-        "noDataHint": "Choose a file, paste JSON, or drop a file anywhere on this page.",
+        "noDataHint": "Choose a file, paste JSON, or drop a file anywhere. It stays in your browser.",
         "jsonSource": "JSON source",
         "invalid": "Invalid",
         "diff": "Diff",
@@ -118,7 +121,8 @@
         "mergeOverride": "Override",
         "mergeResult": "Result",
         "openInEditor": "Open in editor",
-        "mergeEmpty": "Paste valid JSON into both Base and Override to see the merged result."
+        "mergeEmpty": "Paste valid JSON into both Base and Override to see the merged result.",
+        "sourceOnGitHub": "Source code on GitHub"
     },
     "showcase": {
         "title": "Five ways to look at the same data",

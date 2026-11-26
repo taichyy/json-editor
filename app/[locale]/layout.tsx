@@ -19,16 +19,19 @@ export const generateMetadata = async (props: Props): Promise<Metadata> => {
 
     const isZhTW = locale === 'zh-TW';
 
+    const title = isZhTW ? 'JSON Owl · 簡單好用的 JSON 編輯器' : 'JSON Owl · A simple JSON editor';
+    const description = isZhTW
+        ? 'JSON Owl 是簡單、直覺的線上 JSON 編輯器：樹狀與表格編輯、程式碼編輯器、差異比較與合併。開源，資料只在你的瀏覽器處理、不會上傳。'
+        : 'JSON Owl is a simple online JSON editor with tree and table editing, a code editor, diff and merge. Open source, and your data never leaves your browser.';
+
     return {
-        title: isZhTW ? 'json.tools — JSON 編輯器' : 'json.tools — JSON Editor',
-        description: isZhTW
-            ? '快速的本機 JSON 編輯器，支援樹狀視圖、表格視圖、Monaco 程式碼編輯器與差異比較。您的資料絕不離開瀏覽器。'
-            : 'A fast, local JSON editor with tree view, table view, Monaco code editor, and diff comparison. Your data never leaves your browser.',
+        title,
+        description,
+        applicationName: 'JSON Owl',
         openGraph: {
-            title: isZhTW ? 'json.tools — JSON 編輯器' : 'json.tools — JSON Editor',
-            description: isZhTW
-                ? '流暢編輯 JSON 資料。樹狀視圖、表格視圖、Monaco 編輯器與差異比較，完全本機運作。'
-                : 'Edit JSON without friction. Tree view, table view, Monaco editor, and diff comparison. All local, all fast.',
+            title,
+            description,
+            siteName: 'JSON Owl',
             type: 'website',
         },
     };

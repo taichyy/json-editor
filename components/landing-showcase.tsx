@@ -62,7 +62,7 @@ const MonacoPreview = () => {
     <div className={mono}>
         {[
             <><span style={muted}>{"{"}</span></>,
-            <>&nbsp;&nbsp;<span style={key}>&quot;project&quot;</span><span style={muted}>: </span><span style={str}>&quot;json.tools&quot;</span><span style={muted}>,</span></>,
+            <>&nbsp;&nbsp;<span style={key}>&quot;project&quot;</span><span style={muted}>: </span><span style={str}>&quot;JSON Owl&quot;</span><span style={muted}>,</span></>,
             <>&nbsp;&nbsp;<span style={key}>&quot;version&quot;</span><span style={muted}>: </span><span style={str}>&quot;2.0&quot;</span><span style={muted}>,</span></>,
             <>&nbsp;&nbsp;<span style={key}>&quot;local&quot;</span><span style={muted}>: </span><span style={kw}>true</span><span className="underline decoration-wavy" style={{ textDecorationColor: "var(--error)" }}>&nbsp;</span></>,
             <>&nbsp;&nbsp;<span style={key}>&quot;tags&quot;</span><span style={muted}>: [</span><span style={str}>&quot;editor&quot;</span><span style={muted}>]</span></>,
@@ -165,7 +165,7 @@ export const LandingShowcase = () => {
             <div
                 role="tabpanel"
                 className="rounded-xl overflow-hidden"
-                style={{ backgroundColor: "var(--bg-tertiary)", border: "1px solid var(--border-default)", boxShadow: "var(--shadow-lg)" }}
+                style={{ backgroundColor: "var(--bg-tertiary)", border: "1px solid var(--border-default)", boxShadow: "var(--shadow-md)" }}
             >
                 <div
                     className="flex items-center gap-1.5 px-4 py-3"

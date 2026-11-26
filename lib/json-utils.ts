@@ -19,7 +19,7 @@ export const EDITOR_STORAGE_KEYS = {
 };
 
 export const SAMPLE_JSON = {
-    project: "json.tools",
+    project: "JSON Owl",
     version: "2.0",
     local: true,
     owner: { name: "Tai", role: "Frontend engineer" },

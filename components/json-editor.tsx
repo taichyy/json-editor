@@ -41,9 +41,12 @@ import {
     EDITOR_STORAGE_KEYS,
 } from "@/lib/json-utils";
 import { JsonMerge } from "./json-merge";
+import { GitHubLink } from "./github-link";
+import { Brand, OwlLogo } from "./owl-logo";
 import { useTheme } from "./theme-provider";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
+import { useMediaQuery, MOBILE_QUERY } from "@/lib/use-media-query";
 
 // ─── CSS variable shortcuts ───────────────────────────────────────────────────
 const cv = {
@@ -62,6 +65,7 @@ const cv = {
     accentHover: 'var(--accent-hover)',
     accentSubtle: 'var(--accent-subtle)',
     accentText: 'var(--accent-text)',
+    accentContrast: 'var(--accent-contrast)',
     success: 'var(--success)',
     successSubtle: 'var(--success-subtle)',
     error: 'var(--error)',
@@ -83,6 +87,9 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
     const { theme } = useTheme();
     const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs';
     const t = useTranslations('editor');
+    const isMobile = useMediaQuery(MOBILE_QUERY);
+    const panelDirection = isMobile ? 'vertical' : 'horizontal';
+    const handleClass = isMobile ? 'h-[3px]' : 'w-[3px]';
 
     const [jsonData, setJsonData] = useState<any>(null);
     const [arrayTableModal, setArrayTableModal] = useState<{
@@ -348,7 +355,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
             {isDragging && (
                 <div
                     className="absolute inset-0 z-[60] flex items-center justify-center pointer-events-none"
-                    style={{ backgroundColor: 'rgba(79,70,229,0.08)', border: `2px dashed ${cv.accent}` }}
+                    style={{ backgroundColor: cv.accentSubtle, opacity: 0.92, border: `2px dashed ${cv.accent}` }}
                 >
                     <div className="px-4 py-3 rounded-lg text-sm font-medium shadow-md" style={{ backgroundColor: cv.bgSurface, color: cv.accentText }}>
                         <Upload className="inline w-4 h-4 mr-2 -mt-0.5" strokeWidth={2} />
@@ -370,11 +377,11 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
 
             {/* ── Header ── */}
             <header
-                className="flex items-center justify-between px-5 h-12 shrink-0"
+                className="flex items-center justify-between gap-2 px-3 sm:px-5 h-12 shrink-0"
                 style={{ borderBottom: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}
             >
                 {/* Left: back + logo + tabs */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                     {onBackToHome && (
                         <button
                             onClick={onBackToHome}
@@ -385,12 +392,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                         </button>
                     )}
 
-                    <span
-                        className="font-mono text-sm font-semibold tracking-tight hidden sm:block"
-                        style={{ color: cv.textPrimary }}
-                    >
-                        json<span style={{ color: cv.accent }}>.</span>tools
-                    </span>
+                    <Brand size={24} hideNameOnMobile />
 
                     {/* Tabs */}
                     <nav className="flex items-center gap-1">
@@ -398,7 +400,9 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className="flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-colors"
+                                title={tab === 'editor' ? t('tabEditor') : tab === 'compare' ? t('tabCompare') : t('tabMerge')}
+                                aria-label={tab === 'editor' ? t('tabEditor') : tab === 'compare' ? t('tabCompare') : t('tabMerge')}
+                                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-medium transition-colors"
                                 style={{
                                     backgroundColor: activeTab === tab ? cv.accentSubtle : 'transparent',
                                     color: activeTab === tab ? cv.accentText : cv.textSecondary,
@@ -407,7 +411,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                 {tab === 'editor' && <Code className="w-3 h-3" strokeWidth={2} />}
                                 {tab === 'compare' && <GitCompare className="w-3 h-3" strokeWidth={2} />}
                                 {tab === 'merge' && <GitMerge className="w-3 h-3" strokeWidth={2} />}
-                                {tab === 'editor' ? t('tabEditor') : tab === 'compare' ? t('tabCompare') : t('tabMerge')}
+                                <span className="hidden sm:inline">{tab === 'editor' ? t('tabEditor') : tab === 'compare' ? t('tabCompare') : t('tabMerge')}</span>
                             </button>
                         ))}
                     </nav>
@@ -434,6 +438,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                             <span className="hidden sm:inline">{confirmingClear ? t('clickAgainToClear') : t('clearData')}</span>
                         </button>
                     )}
+                    <GitHubLink label={t('sourceOnGitHub')} className="hidden md:inline-flex" />
                     <LanguageSwitcher />
                     <ThemeToggle />
                 </div>
@@ -441,13 +446,13 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
             {/* ── Main content ── */}
             <div className="flex-1 overflow-hidden">
                 {activeTab === 'editor' ? (
-                    <PanelGroup direction="horizontal">
+                    <PanelGroup key={panelDirection} direction={panelDirection}>
 
                         {/* ── Left panel: Import + Export ── */}
-                        <Panel defaultSize={22} minSize={18} maxSize={36}>
+                        <Panel defaultSize={isMobile ? (jsonData ? 16 : 45) : 22} minSize={isMobile ? 8 : 18} maxSize={isMobile ? 60 : 36}>
                             <div
-                                className="h-full flex flex-col overflow-hidden"
-                                style={{ borderRight: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}
+                                className="h-full flex flex-col overflow-y-auto"
+                                style={{ borderRight: isMobile ? undefined : `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}
                             >
                                 {/* Import */}
                                 <div style={{ borderBottom: `1px solid ${cv.borderDefault}` }}>
@@ -560,12 +565,12 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                         </Panel>
 
                         <PanelResizeHandle
-                            className="w-[3px] transition-colors"
+                            className={`${handleClass} transition-colors`}
                             style={{ backgroundColor: cv.borderDefault }}
                         />
 
                         {/* ── Middle panel: Tree editor ── */}
-                        <Panel defaultSize={jsonData ? 45 : 78} minSize={30}>
+                        <Panel defaultSize={jsonData ? (isMobile ? 42 : 45) : (isMobile ? 55 : 78)} minSize={isMobile ? 20 : 30}>
                             <div className="h-full flex flex-col" style={{ backgroundColor: cv.bgSurface }}>
                                 <div
                                     className="flex items-center justify-between px-4 py-2.5 shrink-0"
@@ -593,7 +598,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                     ) : (
                                         <div className="h-full flex items-center justify-center">
                                             <div className="text-center max-w-[260px]">
-                                                <FileText className="mx-auto w-10 h-10 mb-3" style={{ color: cv.textMuted }} strokeWidth={1.25} />
+                                                <OwlLogo size={44} className="mx-auto mb-3" />
                                                 <p className="text-sm font-medium mb-1" style={{ color: cv.textPrimary }}>{t('noData')}</p>
                                                 <p className="text-xs leading-relaxed mb-4" style={{ color: cv.textTertiary }}>
                                                     {t('noDataHint')}
@@ -601,8 +606,8 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                 <div className="flex flex-wrap items-center justify-center gap-1.5">
                                                     <button
                                                         onClick={() => fileInputRef.current?.click()}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold text-white transition-colors active:scale-[0.97]"
-                                                        style={{ backgroundColor: cv.accent }}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors active:scale-[0.97]"
+                                                        style={{ backgroundColor: cv.accent, color: cv.accentContrast }}
                                                     >
                                                         <Upload className="w-3 h-3" strokeWidth={2} />
                                                         {t('chooseFile')}
@@ -634,19 +639,19 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                         {jsonData && (
                             <>
                                 <PanelResizeHandle
-                                    className="w-[3px] transition-colors"
+                                    className={`${handleClass} transition-colors`}
                                     style={{ backgroundColor: cv.borderDefault }}
                                 />
 
                                 {/* ── Right panel: Monaco editor ── */}
-                                <Panel defaultSize={33} minSize={20} maxSize={50}>
+                                <Panel defaultSize={isMobile ? 42 : 33} minSize={20} maxSize={isMobile ? 70 : 50}>
                                     <div className="h-full flex flex-col" style={{ backgroundColor: cv.bgSurface }}>
                                         <div
-                                            className="flex items-center justify-between px-4 py-2.5 shrink-0"
+                                            className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 shrink-0"
                                             style={{ borderBottom: `1px solid ${cv.borderDefault}` }}
                                         >
                                             <div className="flex items-center gap-2">
-                                                <p className="text-sm font-semibold" style={{ color: cv.textPrimary }}>{t('jsonSource')}</p>
+                                                <p className="text-sm font-semibold whitespace-nowrap" style={{ color: cv.textPrimary }}>{t('jsonSource')}</p>
                                                 {editorError && (
                                                     <span
                                                         className="text-[10px] px-2 py-0.5 rounded font-medium"
@@ -657,7 +662,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex flex-wrap items-center justify-end gap-1">
                                                 <select
                                                     value={indent}
                                                     onChange={e => changeIndent(e.target.value as TIndent)}
@@ -680,7 +685,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                         title={t('diffTitle')}
                                                     >
                                                         <GitCompare className="w-3 h-3" strokeWidth={2} />
-                                                        {t('diff')}
+                                                        <span className="inline md:hidden lg:inline">{t('diff')}</span>
                                                     </button>
                                                 )}
                                                 <button
@@ -695,7 +700,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                         ? <Maximize2 className="w-3 h-3" strokeWidth={2} />
                                                         : <Minimize2 className="w-3 h-3" strokeWidth={2} />
                                                     }
-                                                    {isJsonMinified ? t('format') : t('minify')}
+                                                    <span className="inline md:hidden lg:inline">{isJsonMinified ? t('format') : t('minify')}</span>
                                                 </button>
                                                 <button
                                                     onClick={copyJsonToClipboard}
@@ -712,7 +717,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                                         ? <Check className="w-3 h-3" strokeWidth={2.5} />
                                                         : <Copy className="w-3 h-3" strokeWidth={2} />
                                                     }
-                                                    {copySuccess ? t('copied') : t('copy')}
+                                                    <span className="inline md:hidden lg:inline">{copySuccess ? t('copied') : t('copy')}</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -846,10 +851,10 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                         </div>
 
                         <div className="relative flex-1 overflow-hidden">
-                            <PanelGroup direction="horizontal">
+                            <PanelGroup key={panelDirection} direction={panelDirection}>
                                 {/* Left */}
                                 <Panel defaultSize={50} minSize={30}>
-                                    <div className="h-full flex flex-col" style={{ borderRight: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}>
+                                    <div className="h-full flex flex-col" style={{ borderRight: isMobile ? undefined : `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSurface }}>
                                         <div className="flex items-center justify-between px-4 py-2.5 shrink-0" style={{ borderBottom: `1px solid ${cv.borderDefault}`, backgroundColor: cv.bgSecondary }}>
                                             <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('original')}</p>
                                             {leftJsonError && (
@@ -867,7 +872,7 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                     </div>
                                 </Panel>
 
-                                <PanelResizeHandle className="w-[3px]" style={{ backgroundColor: cv.borderDefault }} />
+                                <PanelResizeHandle className={handleClass} style={{ backgroundColor: cv.borderDefault }} />
 
                                 {/* Right */}
                                 <Panel defaultSize={50} minSize={30}>
@@ -895,8 +900,8 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                                 <div className="absolute bottom-6 right-6 z-10">
                                     <button
                                         onClick={() => setIsDiffOpen(true)}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white shadow-md transition-colors"
-                                        style={{ backgroundColor: cv.accent }}
+                                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shadow-md transition-colors"
+                                        style={{ backgroundColor: cv.accent, color: cv.accentContrast }}
                                         onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.accentHover)}
                                         onMouseLeave={e => (e.currentTarget.style.backgroundColor = cv.accent)}
                                     >
@@ -1013,8 +1018,8 @@ const JsonEditor: React.FC<JsonEditorProps> = (props) => {
                             </button>
                             <button
                                 onClick={() => setArrayTableModal(null)}
-                                className="px-4 py-2 rounded-md text-sm font-medium text-white transition-colors"
-                                style={{ backgroundColor: cv.accent }}
+                                className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                style={{ backgroundColor: cv.accent, color: cv.accentContrast }}
                                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.accentHover)}
                                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = cv.accent)}
                             >
@@ -1292,8 +1297,8 @@ const TableView: React.FC<{ data: any; onChange: (data: any) => void }> = (props
                     <p className="text-xs font-medium" style={{ color: cv.textSecondary }}>{t('rows', { count: arr.length })}</p>
                     <button
                         onClick={() => onChange([...arr, columns.reduce((o, c) => ({ ...o, [c]: '' }), {})])}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium text-white transition-colors"
-                        style={{ backgroundColor: cv.accent }}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-colors"
+                        style={{ backgroundColor: cv.accent, color: cv.accentContrast }}
                         onMouseEnter={e => (e.currentTarget.style.backgroundColor = cv.accentHover)}
                         onMouseLeave={e => (e.currentTarget.style.backgroundColor = cv.accent)}
                     >

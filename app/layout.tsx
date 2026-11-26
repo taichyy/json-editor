@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
@@ -19,9 +19,18 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-    title: 'json.tools — JSON Editor',
+    metadataBase: new URL('https://json-editor.heytai.dev'),
+    title: 'JSON Owl · A simple JSON editor',
     description:
-        'A fast, local JSON editor with tree view, table view, Monaco code editor, and diff comparison. Your data never leaves your browser.',
+        'JSON Owl is a simple online JSON editor with tree and table editing, a code editor, diff and merge. Open source, and your data never leaves your browser.',
+    applicationName: 'JSON Owl',
+};
+
+export const viewport: Viewport = {
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+        { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+    ],
 };
 
 const RootLayout = (props: { children: React.ReactNode }) => {

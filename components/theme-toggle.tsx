@@ -38,12 +38,12 @@ export const ThemeToggle = (props: { className?: string }) => {
             {isDark ? (
                 <>
                     <Sun className="w-3.5 h-3.5" strokeWidth={1.75} />
-                    <span>Light</span>
+                    <span className="hidden sm:inline">Light</span>
                 </>
             ) : (
                 <>
                     <Moon className="w-3.5 h-3.5" strokeWidth={1.75} />
-                    <span>Dark</span>
+                    <span className="hidden sm:inline">Dark</span>
                 </>
             )}
         </button>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <style>
+    .body{fill:#0b1a3d}.body-s{stroke:#0b1a3d}.pupil{fill:#0b1a3d}.code{stroke:#0b1a3d}.paper{fill:#fff}.beak{fill:#2f6bff}.fold{fill:#5b6cff}
+    @media (prefers-color-scheme:dark){.body{fill:#3d5fd6}.body-s{stroke:#3d5fd6}.fold{fill:#8fa4ff}}
+  </style>
+  <path class="body" d="M6.2 2.8 11 6.2a14 14 0 0 1 10 0l4.8-3.4.1 6.6a10.6 10.6 0 0 1 2.1 6.3c0 6-5.4 10.3-12 10.3S4 21.7 4 15.7c0-2.3.7-4.5 2.1-6.3Z"/>
+  <path class="paper" d="M11.4 8.4a5 5 0 0 1 4.6 3 5 5 0 1 1 4.6 7L16 20.6l-4.6-2.2a5 5 0 0 1 0-10Z"/>
+  <circle class="pupil" cx="11.4" cy="13.4" r="2.3"/>
+  <circle class="pupil" cx="20.6" cy="13.4" r="2.3"/>
+  <path class="beak" d="m16 15.4 1.6 1.7-1.6 1.9-1.6-1.9Z"/>
+  <path class="paper body-s" stroke-width="1.8" stroke-linejoin="round" d="M6.4 18.6h16.4l4 4v5.2a2.4 2.4 0 0 1-2.4 2.4H6.4A2.4 2.4 0 0 1 4 27.8V21a2.4 2.4 0 0 1 2.4-2.4Z"/>
+  <path class="fold" d="M22.8 19.5v3.1h3.1Z"/>
+  <path class="code" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m12.6 22.2-2.4 2.3 2.4 2.3M18.2 22.2l2.4 2.3-2.4 2.3"/>
+</svg>

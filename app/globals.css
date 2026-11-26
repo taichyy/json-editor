@@ -19,11 +19,19 @@
   --text-tertiary:  #a1a1aa;
   --text-muted:     #c4c4c8;
 
-  /* Indigo accent — not the AI-purple, a sharper blue-indigo */
-  --accent:         #4f46e5;
-  --accent-hover:   #4338ca;
-  --accent-subtle:  #eef2ff;
-  --accent-text:    #4338ca;
+  /* JSON Owl blue: taken from the owl mark */
+  --accent:          #2557e6;
+  --accent-hover:    #1d47c4;
+  --accent-subtle:   #eef3ff;
+  --accent-text:     #1f4fd1;
+  --accent-contrast: #ffffff;
+
+  /* Owl mark */
+  --owl-body:  #0b1a3d;
+  --owl-paper: #ffffff;
+  --owl-pupil: #0b1a3d;
+  --owl-beak:  #2f6bff;
+  --owl-fold:  #5b6cff;
 
   --success:        #16a34a;
   --success-subtle: #f0fdf4;
@@ -54,10 +62,17 @@
   --text-tertiary:  #52525b;
   --text-muted:     #3f3f46;
 
-  --accent:         #6366f1;
-  --accent-hover:   #818cf8;
-  --accent-subtle:  #1e1b4b;
-  --accent-text:    #a5b4fc;
+  --accent:          #6b8cff;
+  --accent-hover:    #8ca5ff;
+  --accent-subtle:   #111b3d;
+  --accent-text:     #a3b8ff;
+  --accent-contrast: #0b1a3d;
+
+  --owl-body:  #3d5fd6;
+  --owl-paper: #ffffff;
+  --owl-pupil: #0b1a3d;
+  --owl-beak:  #2f6bff;
+  --owl-fold:  #8fa4ff;
 
   --success:        #22c55e;
   --success-subtle: #052e16;

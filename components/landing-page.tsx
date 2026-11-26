@@ -4,6 +4,9 @@ import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
+import { Brand } from "./owl-logo";
+import { REPO_URL } from "@/lib/site";
+import { GitHubLink } from "./github-link";
 import { ThemeToggle } from "./theme-toggle";
 import { LandingShowcase } from "./landing-showcase";
 import { LandingDropZone } from "./landing-drop-zone";
@@ -15,7 +18,7 @@ interface LandingPageProps {
 
 // ── Animated JSON preview ─────────────────────────────────────────────────────
 const SAMPLE_JSON = `{
-  "project": "json.tools",
+  "project": "JSON Owl",
   "version": "2.0",
   "features": [
     "tree editor",
@@ -48,7 +51,7 @@ const JsonPreview = () => {
             style={{
                 backgroundColor: 'var(--bg-tertiary)',
                 border: '1px solid var(--border-default)',
-                boxShadow: 'var(--shadow-lg)',
+                boxShadow: 'var(--shadow-md)',
             }}
         >
             {/* Window chrome */}
@@ -76,11 +79,6 @@ const JsonPreview = () => {
                 )}
             </pre>
 
-            {/* Ambient glow */}
-            <div
-                className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none"
-                style={{ backgroundColor: 'var(--accent)' }}
-            />
 
             <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -156,18 +154,17 @@ export const LandingPage = (props: LandingPageProps) => {
                     backgroundColor: 'var(--bg-primary)',
                 }}
             >
-                <span className="font-mono text-sm font-semibold tracking-tight select-none">
-                    json<span style={{ color: 'var(--accent)' }}>.</span>tools
-                </span>
+                <Brand />
 
                 <div className="flex items-center gap-2">
+                    <GitHubLink label={t('nav.github')} className="hidden sm:inline-flex" />
                     <LanguageSwitcher />
                     <ThemeToggle />
                     <button
                         onClick={onEnter}
                         className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold
               transition-all active:scale-[0.97]"
-                        style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
+                        style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-contrast)' }}
                         onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
                         onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
                     >
@@ -208,16 +205,22 @@ export const LandingPage = (props: LandingPageProps) => {
                                 onClick={onEnter}
                                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm
                   transition-all active:scale-[0.97] shadow-sm"
-                                style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
+                                style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-contrast)' }}
                                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
                                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
                             >
                                 {t('landing.startEditing')}
                                 <ArrowRight className="w-4 h-4" strokeWidth={2} />
                             </button>
-                            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                                {t('landing.noSignup')}
-                            </span>
+                            <a
+                                href={REPO_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs underline-offset-4 hover:underline"
+                                style={{ color: 'var(--text-secondary)' }}
+                            >
+                                {t('landing.viewSource')}
+                            </a>
                         </div>
                     </div>
 
@@ -245,15 +248,22 @@ export const LandingPage = (props: LandingPageProps) => {
 
             {/* ── Footer ── */}
             <footer
-                className="w-full max-w-6xl mx-auto px-6 py-5 flex items-center justify-between"
+                className="w-full max-w-6xl mx-auto px-6 py-5 flex flex-wrap items-center justify-between gap-3"
                 style={{ borderTop: '1px solid var(--border-subtle)' }}
             >
-                <span className="font-mono text-xs font-semibold select-none" style={{ color: 'var(--text-muted)' }}>
-                    json<span style={{ color: 'var(--accent)' }}>.</span>tools
-                </span>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {t('landing.noDataSent')}
-                </p>
+                <Brand size={18} />
+                <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                    <span>{t('landing.noDataSent')}</span>
+                    <a
+                        href={REPO_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline-offset-4 hover:underline"
+                        style={{ color: 'var(--text-secondary)' }}
+                    >
+                        {t('landing.openSource')}
+                    </a>
+                </div>
             </footer>
         </div>
     );

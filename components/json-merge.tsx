@@ -14,6 +14,7 @@ import {
     describeParseError,
     EDITOR_STORAGE_KEYS,
 } from "@/lib/json-utils";
+import { useMediaQuery, MOBILE_QUERY } from "@/lib/use-media-query";
 
 type TJsonMergeProps = {
     monacoTheme: string;
@@ -46,6 +47,9 @@ export const JsonMerge = (props: TJsonMergeProps) => {
     const { monacoTheme, indent, onOpenInEditor } = props;
 
     const t = useTranslations("editor");
+    const isMobile = useMediaQuery(MOBILE_QUERY);
+    const direction = isMobile ? "vertical" : "horizontal";
+    const handleClass = isMobile ? "h-[3px]" : "w-[3px]";
     const [base, setBase] = useState("");
     const [override, setOverride] = useState("");
     const [arrays, setArrays] = useState<TArrayStrategy>("replace");
@@ -147,15 +151,15 @@ export const JsonMerge = (props: TJsonMergeProps) => {
             </div>
 
             <div className="flex-1 overflow-hidden">
-                <PanelGroup direction="horizontal">
+                <PanelGroup key={direction} direction={direction}>
                     <Panel defaultSize={33} minSize={20}>
                         {pane(t('mergeBase'), base, setBase, left.error)}
                     </Panel>
-                    <PanelResizeHandle className="w-[3px]" style={{ backgroundColor: "var(--border-default)" }} />
+                    <PanelResizeHandle className={handleClass} style={{ backgroundColor: "var(--border-default)" }} />
                     <Panel defaultSize={33} minSize={20}>
                         {pane(t('mergeOverride'), override, setOverride, right.error)}
                     </Panel>
-                    <PanelResizeHandle className="w-[3px]" style={{ backgroundColor: "var(--border-default)" }} />
+                    <PanelResizeHandle className={handleClass} style={{ backgroundColor: "var(--border-default)" }} />
                     <Panel defaultSize={34} minSize={20}>
                         <div className="h-full flex flex-col" style={{ backgroundColor: "var(--bg-surface)" }}>
                             <div

@@ -1,15 +1,18 @@
 {
     "nav": {
-        "openEditor": "開啟編輯器"
+        "openEditor": "開啟編輯器",
+        "github": "GitHub 原始碼"
     },
     "landing": {
-        "badge": "免費 · 無需登入 · 在瀏覽器中執行",
+        "badge": "免費 · 開源 · 純瀏覽器運作",
         "headline": "流暢編輯\nJSON 資料。",
-        "subheadline": "樹狀視圖、表格視圖、Monaco 編輯器與差異比較，完全本機運作，速度飛快。您的資料絕不離開瀏覽器。",
+        "subheadline": "樹狀視圖、表格視圖、程式碼編輯器、差異比較與合併。全部在你的瀏覽器裡執行，資料不會上傳。",
         "startEditing": "開始編輯",
         "noSignup": "無需註冊",
-        "localProcessing": "所有處理均在本機完成，無資安風險。開啟分頁即可使用。",
-        "noDataSent": "資料不會傳送至任何伺服器。"
+        "localProcessing": "所有處理都在你的瀏覽器完成，JSON 不會上傳到任何伺服器。",
+        "noDataSent": "完全在瀏覽器中執行，不會上傳任何資料。",
+        "viewSource": "在 GitHub 查看原始碼",
+        "openSource": "在 GitHub 上開源"
     },
     "features": {
         "tree": {
@@ -57,7 +60,7 @@
         "treeEditor": "樹狀編輯器",
         "treeEditorHint": "點擊任意值以編輯 · 陣列可開啟表格視圖",
         "noData": "無資料",
-        "noDataHint": "選擇檔案、貼上 JSON，或把檔案拖到頁面任何地方。",
+        "noDataHint": "選擇檔案、貼上 JSON，或把檔案拖到頁面任何地方。資料只留在你的瀏覽器。",
         "jsonSource": "JSON 原始碼",
         "invalid": "無效",
         "diff": "差異",
@@ -118,7 +121,8 @@
         "mergeOverride": "覆寫",
         "mergeResult": "結果",
         "openInEditor": "在編輯器開啟",
-        "mergeEmpty": "在基底與覆寫都貼上有效的 JSON，就會看到合併結果。"
+        "mergeEmpty": "在基底與覆寫都貼上有效的 JSON，就會看到合併結果。",
+        "sourceOnGitHub": "GitHub 原始碼"
     },
     "showcase": {
         "title": "同一份資料，五種看法",
