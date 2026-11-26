@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import { Analytics } from "@vercel/analytics/next"
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 
-import './globals.css';
-import { ThemeProvider } from '../components/theme-provider';
+import "./globals.css";
+import { ThemeProvider } from "../components/theme-provider";
 
 const geistSans = localFont({
     src: './fonts/GeistVF.woff',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         'A fast, local JSON editor with tree view, table view, Monaco code editor, and diff comparison. Your data never leaves your browser.',
 };
 
-const RootLayout = (props : { children: React.ReactNode }) => {
+const RootLayout = (props: { children: React.ReactNode }) => {
     const { children } = props;
 
     return (

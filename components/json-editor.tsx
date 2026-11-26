@@ -1,34 +1,34 @@
-'use client';
+"use client"
 
 import {
-    Upload, 
-    Download, 
-    FileText, 
-    Code, 
-    Database, 
-    Plus, 
+    X,
+    Code,
+    Plus,
+    Copy,
+    Table,
+    Trash,
+    Check,
+    Upload,
     Trash2,
-    ChevronDown, 
-    ChevronRight, 
-    Table, 
-    X, 
-    Minimize2, 
+    Download,
+    FileText,
+    Database,
+    Minimize2,
     Maximize2,
-    Copy, 
-    GitCompare, 
-    Trash, 
-    ArrowLeft, 
-    Check
-} from 'lucide-react';
-import Editor from '@monaco-editor/react';
-import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect } from 'react';
-import ReactDiffViewer from 'react-diff-viewer-continued';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+    ArrowLeft,
+    GitCompare,
+    ChevronDown,
+    ChevronRight,
+} from "lucide-react";
+import Editor from "@monaco-editor/react";
+import { useTranslations } from "next-intl";
+import { useState, useRef, useEffect } from "react";
+import ReactDiffViewer from "react-diff-viewer-continued";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { useTheme } from './theme-provider';
-import { ThemeToggle } from './theme-toggle';
-import { LanguageSwitcher } from './language-switcher';
+import { useTheme } from "./theme-provider";
+import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 // ─── CSS variable shortcuts ───────────────────────────────────────────────────
 const cv = {
@@ -830,7 +830,7 @@ const EnhancedTreeView: React.FC<{
     path?: string;
 }> = (props) => {
     const { data, onChange, onArrayTableRequest } = props;
-    
+
     const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
     const t = useTranslations('editor');
 

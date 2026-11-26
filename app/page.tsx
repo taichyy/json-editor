@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 // Redirect bare "/" to the default locale
 const RootPage = () => {
